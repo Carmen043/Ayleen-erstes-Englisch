@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meine ersten englischen Wörter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF6FF; --sky:#BFE3FF; --card:#FFFFFF; --text:#22305A; --muted:#5E6B8F;
+  --accent:#FF7AA8; --star:#FFC83D; --ok:#2DB36F; --okbg:#DDF6E8; --bad:#F06449; --badbg:#FDE5E0; --edge:#CFE2F5;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A2E; --sky:#1C2A4A; --card:#1B2640; --text:#EEF3FF; --muted:#A3AFCF;
+    --accent:#FF8FB6; --star:#FFD45E; --ok:#53D18F; --okbg:#173A28; --bad:#FF7F66; --badbg:#3E1E18; --edge:#2E3E62;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A2E; --sky:#1C2A4A; --card:#1B2640; --text:#EEF3FF; --muted:#A3AFCF;
+  --accent:#FF8FB6; --star:#FFD45E; --ok:#53D18F; --okbg:#173A28; --bad:#FF7F66; --badbg:#3E1E18; --edge:#2E3E62;
+  color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:linear-gradient(var(--sky),var(--bg) 320px);background-color:var(--bg);color:var(--text);font-family:"Fredoka","Trebuchet MS",system-ui,sans-serif;font-size:20px}
+main{max-width:620px;margin:0 auto;padding:22px 18px 48px;text-align:center}
+h1{font-size:2.1rem;margin:8px 0 4px;line-height:1.1}
+p{margin:6px 0}
+.sub{color:var(--muted);font-size:1.1rem}
+button{font:inherit;cursor:pointer;border:none;border-radius:22px;color:var(--text)}
+button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
+.hidden{display:none!important}
+.parade{font-size:2.6rem;letter-spacing:.15em;margin:18px 0 6px;line-height:1.3}
+.go{background:var(--accent);color:#fff;font-size:1.7rem;font-weight:700;padding:20px 40px;margin-top:22px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.stars{font-size:1.6rem;min-height:2.2rem;margin-top:6px;letter-spacing:.05em}
+.prog{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
+.prog i{width:22px;height:22px;border-radius:50%;background:var(--edge)}
+.prog i.done{background:var(--star)}
+.prog i.now{outline:3px solid var(--accent)}
+.q{background:var(--card);border:3px solid var(--edge);border-radius:28px;padding:20px 16px 24px;margin-top:6px}
+.ask{color:var(--muted);font-size:1.15rem}
+.big{font-size:5rem;line-height:1.1;margin:8px 0 0}
+.word{font-size:2.6rem;font-weight:700;margin:6px 0}
+.de{font-size:1.3rem;color:var(--muted)}
+.speak{background:var(--sky);font-size:1.6rem;padding:8px 20px;margin-top:8px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.opts button{background:var(--bg);border:3px solid var(--edge);padding:16px 6px;min-height:110px;display:flex;align-items:center;justify-content:center}
+.opts.pics button{font-size:3.6rem}
+.opts.words button{font-size:1.5rem;font-weight:600}
+.opts button.right{background:var(--okbg);border-color:var(--ok)}
+.opts button.wrong{background:var(--badbg);border-color:var(--bad);opacity:.7}
+.fb{font-size:1.6rem;font-weight:700;margin-top:16px;min-height:2.2rem}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.next{background:var(--ok);color:#fff;font-size:1.5rem;font-weight:700;padding:16px 36px;margin-top:10px}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.reset{background:none;color:var(--muted);text-decoration:underline;font-size:1rem;margin-top:30px}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}}
+@media (max-width:380px){.opts.pics button{font-size:3rem}.word{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<main>
+  <section id="home">
+    <h1>Hello! 👋</h1>
+    <p class="sub">Lerne deine ersten englischen Wörter</p>
+    <div class="parade" aria-hidden="true">🐱🐶🦄🍦⚽☀️</div>
+    <div class="stars" id="total"></div>
+    <button class="go" id="start">Los geht’s!</button>
+    <p class="sub" style="margin-top:16px">Tipp: Mach den Ton an 🔊</p>
+    <button class="reset" id="reset">Alles neu anfangen</button>
+  </section>
+
+  <section id="play" class="hidden">
+    <div class="prog" id="prog"></div>
+    <div class="q">
+      <div class="ask" id="ask"></div>
+      <div id="prompt"></div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+      <button class="next hidden" id="next">Weiter</button>
+    </div>
+  </section>
+
+  <section id="done" class="hidden">
+    <h1>Super gemacht! 🎉</h1>
+    <div class="parade" id="won"></div>
+    <p class="sub" id="doneTxt"></p>
+    <button class="go" id="again">Nochmal!</button><br>
+    <button class="reset" id="home2">Zum Anfang</button>
+  </section>
+</main>
+<script>
+const WORDS=[
+ ["cat","Katze","🐱"],["dog","Hund","🐶"],["horse","Pferd","🐴"],["rabbit","Hase","🐰"],
+ ["fish","Fisch","🐟"],["bird","Vogel","🐦"],["unicorn","Einhorn","🦄"],
+ ["red","rot","🟥"],["blue","blau","🟦"],["green","grün","🟩"],["yellow","gelb","🟨"],
+ ["apple","Apfel","🍎"],["ice cream","Eis","🍦"],["ball","Ball","⚽"],["sun","Sonne","☀️"],["house","Haus","🏠"],
+ ["one","eins","1️⃣"],["two","zwei","2️⃣"],["three","drei","3️⃣"],["hello","hallo","👋"]
+].map(([en,de,pic],i)=>({id:i,en,de,pic}));
+
+const KEY="erste-englische-woerter-v1";
+let S={b:{},stars:0};
+try{const r=localStorage.getItem(KEY); if(r){const p=JSON.parse(r); if(p&&p.b) S={b:p.b,stars:p.stars||0};}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const box=id=>S.b[id]??0;           // 0 = neu, 1 = schwierig, 2..4 = kann ich
+const W=[8,12,4,2,1];
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+let voice=null;
+function pickVoice(){const v=speechSynthesis.getVoices(); voice=v.find(x=>/en[-_]GB/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null;}
+if("speechSynthesis" in window){pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}
+function say(t){try{speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="en-GB"; if(voice) u.voice=voice; u.rate=.8; speechSynthesis.speak(u);}catch(e){}}
+
+const ROUND=10; let R;
+function pick(){
+  const list=WORDS.filter(w=>!R.recent.includes(w.id));
+  let tot=0; const ws=list.map(w=>{const x=W[box(w.id)]; tot+=x; return x;});
+  let r=Math.random()*tot;
+  for(let i=0;i<list.length;i++){r-=ws[i]; if(r<=0) return list[i];}
+  return list[list.length-1];
+}
+function start(){R={i:0,right:0,recent:[],retry:[],won:[]}; show("play"); ask();}
+function show(n){["home","play","done"].forEach(s=>$(s).classList.toggle("hidden",s!==n));}
+function renderHome(){
+  const known=WORDS.filter(w=>box(w.id)>=2).length;
+  $("total").textContent=S.stars?`⭐ ${S.stars} Sterne | ${known} von ${WORDS.length} Wörtern kannst du schon`:"";
+}
+function ask(){
+  if(R.i>=ROUND) return finish();
+  $("prog").innerHTML=Array.from({length:ROUND},(_,k)=>`<i class="${k<R.i?"done":k===R.i?"now":""}"></i>`).join("");
+  $("fb").textContent=""; $("fb").className="fb"; $("next").classList.add("hidden"); R.answered=false;
+  const due=R.retry.findIndex(x=>x.at<=R.i);
+  const w=due>=0?R.retry.splice(due,1)[0].w:pick();
+  R.recent.push(w.id); if(R.recent.length>3) R.recent.shift();
+  const others=shuffle(WORDS.filter(x=>x.id!==w.id)).slice(0,2);
+  const opts=shuffle([w,...others]);
+  // Typ A: englisches Wort hören -> Bild tippen. Typ B: Bild + Deutsch -> englisches Wort tippen.
+  const typeA=box(w.id)<1?Math.random()<.6:Math.random()<.4;
+  R.cur={w,typeA};
+  if(typeA){
+    $("ask").textContent="Welches Bild passt?";
+    $("prompt").innerHTML=`<div class="word">${w.en}</div><button class="speak" id="spk" aria-label="Anhören">🔊</button>`;
+    $("opts").className="opts pics";
+    $("opts").innerHTML=opts.map(o=>`<button data-id="${o.id}" aria-label="${o.de}">${o.pic}</button>`).join("");
+    say(w.en);
+  } else {
+    $("ask").textContent="Wie heißt das auf Englisch?";
+    $("prompt").innerHTML=`<div class="big">${w.pic}</div><div class="de">${w.de}</div>`;
+    $("opts").className="opts words";
+    $("opts").innerHTML=opts.map(o=>`<button data-id="${o.id}">${o.en}</button>`).join("");
+  }
+  const spk=$("spk"); if(spk) spk.onclick=()=>say(w.en);
+}
+$("opts").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b||R.answered) return;
+  const w=R.cur.w, ok=+b.dataset.id===w.id;
+  if(ok){
+    R.answered=true; b.classList.add("right","pop");
+    S.b[w.id]=box(w.id)===0?2:Math.min(4,box(w.id)+1);
+    if(!R.firstTryMissed){R.right++; S.stars++; R.won.push(w.pic);}
+    R.firstTryMissed=false;
+    $("fb").textContent=["Super! ⭐","Toll! ⭐","Richtig! ⭐","Klasse! ⭐"][Math.floor(Math.random()*4)]; $("fb").className="fb ok";
+    say(w.en); save();
+    $("next").classList.remove("hidden"); $("next").focus();
+  } else {
+    b.classList.add("wrong"); b.disabled=true;
+    if(!R.firstTryMissed){S.b[w.id]=1; R.retry.push({w,at:R.i+3}); save();}
+    R.firstTryMissed=true;
+    $("fb").textContent="Probier’s nochmal!"; $("fb").className="fb bad";
+  }
+});
+$("next").onclick=()=>{R.i++; ask();};
+function finish(){
+  $("won").textContent=R.won.join("")||"💪";
+  $("doneTxt").textContent=`${R.right} von ${ROUND} gleich beim ersten Mal richtig!`;
+  show("done");
+}
+$("start").onclick=start; $("again").onclick=start;
+$("home2").onclick=()=>{renderHome(); show("home");};
+$("reset").onclick=()=>{if(confirm("Wirklich alles neu anfangen?")){S={b:{},stars:0}; save(); renderHome();}};
+renderHome();
+</script>
+</body>
+</html>
