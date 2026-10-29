@@ -60,6 +60,15 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
 .next{background:var(--ok);color:#fff;font-size:1.5rem;font-weight:700;padding:16px 36px;margin-top:10px}
 .pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.cat{background:var(--card);border:3px solid var(--edge);padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cat .e{font-size:2.6rem;line-height:1.1}
+.cat .n{font-size:1.25rem;font-weight:600}
+.cat .p{font-size:.95rem;color:var(--muted)}
+.cat .bar{width:80%;height:8px;border-radius:4px;background:var(--edge);overflow:hidden;margin-top:4px}
+.cat .bar b{display:block;height:100%;background:var(--star)}
+.mix{width:100%;margin-top:18px;font-size:1.45rem;padding:16px 20px}
+.chip{display:inline-block;background:var(--card);border:2px solid var(--edge);border-radius:16px;padding:2px 12px;font-size:1rem;color:var(--muted);margin-bottom:8px}
 .reset{background:none;color:var(--muted);text-decoration:underline;font-size:1rem;margin-top:30px}
 @media (prefers-reduced-motion: reduce){.pop{animation:none}}
 @media (max-width:380px){.opts.pics button{font-size:3rem}.word{font-size:2.2rem}}
@@ -70,14 +79,16 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
   <section id="home">
     <h1>Hello! 👋</h1>
     <p class="sub">Lerne deine ersten englischen Wörter</p>
-    <div class="parade" aria-hidden="true">🐱🐶🦄🍦⚽☀️</div>
     <div class="stars" id="total"></div>
-    <button class="go" id="start">Los geht’s!</button>
+    <p class="sub" style="margin-top:10px">Wähle ein Thema:</p>
+    <div class="cats" id="cats"></div>
+    <button class="go mix" id="start">🎲 Alles gemischt</button>
     <p class="sub" style="margin-top:16px">Tipp: Mach den Ton an 🔊</p>
     <button class="reset" id="reset">Alles neu anfangen</button>
   </section>
 
   <section id="play" class="hidden">
+    <div class="chip" id="chip"></div>
     <div class="prog" id="prog"></div>
     <div class="q">
       <div class="ask" id="ask"></div>
@@ -97,17 +108,28 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
   </section>
 </main>
 <script>
-const WORDS=[
- ["cat","Katze","🐱"],["dog","Hund","🐶"],["horse","Pferd","🐴"],["rabbit","Hase","🐰"],
- ["fish","Fisch","🐟"],["bird","Vogel","🐦"],["unicorn","Einhorn","🦄"],
- ["red","rot","🟥"],["blue","blau","🟦"],["green","grün","🟩"],["yellow","gelb","🟨"],
- ["apple","Apfel","🍎"],["ice cream","Eis","🍦"],["ball","Ball","⚽"],["sun","Sonne","☀️"],["house","Haus","🏠"],
- ["one","eins","1️⃣"],["two","zwei","2️⃣"],["three","drei","3️⃣"],["hello","hallo","👋"]
-].map(([en,de,pic],i)=>({id:i,en,de,pic}));
+const CATS=[
+ {k:"tiere",n:"Tiere",e:"🐾",w:[["cat","Katze","🐱"],["dog","Hund","🐶"],["horse","Pferd","🐴"],["rabbit","Hase","🐰"],["fish","Fisch","🐟"],["bird","Vogel","🐦"],["unicorn","Einhorn","🦄"],["mouse","Maus","🐭"],["cow","Kuh","🐮"],["pig","Schwein","🐷"],["duck","Ente","🦆"],["lion","Löwe","🦁"],["elephant","Elefant","🐘"],["frog","Frosch","🐸"]]},
+ {k:"farben",n:"Farben",e:"🎨",w:[["red","rot","🟥"],["blue","blau","🟦"],["green","grün","🟩"],["yellow","gelb","🟨"],["orange","orange","🟧"],["purple","lila","🟪"],["brown","braun","🟫"],["black","schwarz","⬛"],["white","weiß","⬜"],["pink","rosa","🩷"]]},
+ {k:"essen",n:"Essen",e:"🍎",w:[["apple","Apfel","🍎"],["banana","Banane","🍌"],["strawberry","Erdbeere","🍓"],["carrot","Karotte","🥕"],["bread","Brot","🍞"],["egg","Ei","🥚"],["milk","Milch","🥛"],["cake","Kuchen","🎂"],["pizza","Pizza","🍕"],["ice cream","Eis","🍦"]]},
+ {k:"zahlen",n:"Zahlen",e:"🔢",w:[["one","eins","1️⃣"],["two","zwei","2️⃣"],["three","drei","3️⃣"],["four","vier","4️⃣"],["five","fünf","5️⃣"],["six","sechs","6️⃣"],["seven","sieben","7️⃣"],["eight","acht","8️⃣"],["nine","neun","9️⃣"],["ten","zehn","🔟"]]},
+ {k:"sachen",n:"Spielen & Schule",e:"🧸",w:[["ball","Ball","⚽"],["teddy","Teddy","🧸"],["kite","Drachen","🪁"],["car","Auto","🚗"],["bike","Fahrrad","🚲"],["book","Buch","📖"],["pencil","Bleistift","✏️"],["schoolbag","Schulranzen","🎒"],["house","Haus","🏠"]]},
+ {k:"natur",n:"Natur & Wetter",e:"🌈",w:[["sun","Sonne","☀️"],["moon","Mond","🌙"],["star","Stern","⭐"],["tree","Baum","🌳"],["flower","Blume","🌸"],["rain","Regen","🌧️"],["snow","Schnee","❄️"],["rainbow","Regenbogen","🌈"]]},
+ {k:"familie",n:"Familie",e:"👨‍👩‍👧",w:[["mum","Mama","👩"],["dad","Papa","👨"],["sister","Schwester","👧"],["brother","Bruder","👦"],["grandma","Oma","👵"],["grandpa","Opa","👴"],["baby","Baby","👶"]]},
+ {k:"koerper",n:"Mein Körper",e:"👂",w:[["hand","Hand","✋"],["foot","Fuß","🦶"],["nose","Nase","👃"],["eye","Auge","👁️"],["ear","Ohr","👂"],["mouth","Mund","👄"]]},
+ {k:"sagen",n:"Sagen & Fühlen",e:"😀",w:[["hello","hallo","👋"],["yes","ja","👍"],["no","nein","👎"],["happy","fröhlich","😀"],["sad","traurig","😢"],["tired","müde","😴"]]}
+];
+const WORDS=[];
+CATS.forEach(c=>c.w.forEach(([en,de,pic])=>WORDS.push({id:en,en,de,pic,c:c.k})));
+const OLD=["cat","dog","horse","rabbit","fish","bird","unicorn","red","blue","green","yellow","apple","ice cream","ball","sun","house","one","two","three","hello"];
 
-const KEY="erste-englische-woerter-v1";
+const KEY="erste-englische-woerter-v2", OLDKEY="erste-englische-woerter-v1";
 let S={b:{},stars:0};
-try{const r=localStorage.getItem(KEY); if(r){const p=JSON.parse(r); if(p&&p.b) S={b:p.b,stars:p.stars||0};}}catch(e){}
+try{
+  const r=localStorage.getItem(KEY);
+  if(r){const p=JSON.parse(r); if(p&&p.b) S={b:p.b,stars:p.stars||0};}
+  else{const o=localStorage.getItem(OLDKEY); if(o){const p=JSON.parse(o); if(p&&p.b){Object.keys(p.b).forEach(i=>{if(OLD[i]) S.b[OLD[i]]=p.b[i];}); S.stars=p.stars||0;}}}
+}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const box=id=>S.b[id]??0;           // 0 = neu, 1 = schwierig, 2..4 = kann ich
 const W=[8,12,4,2,1];
@@ -121,18 +143,30 @@ function say(t){try{speechSynthesis.cancel(); const u=new SpeechSynthesisUtteran
 
 const ROUND=10; let R;
 function pick(){
-  const list=WORDS.filter(w=>!R.recent.includes(w.id));
+  const list=R.pool.filter(w=>!R.recent.includes(w.id));
   let tot=0; const ws=list.map(w=>{const x=W[box(w.id)]; tot+=x; return x;});
   let r=Math.random()*tot;
   for(let i=0;i<list.length;i++){r-=ws[i]; if(r<=0) return list[i];}
   return list[list.length-1];
 }
-function start(){R={i:0,right:0,recent:[],retry:[],won:[]}; show("play"); ask();}
+let CUR=null; // null = alles gemischt
+function start(cat){
+  CUR=cat===undefined?CUR:cat;
+  const c=CATS.find(x=>x.k===CUR);
+  R={i:0,right:0,recent:[],retry:[],won:[],pool:c?WORDS.filter(w=>w.c===c.k):WORDS};
+  $("chip").textContent=c?`${c.e} ${c.n}`:"🎲 Alles gemischt";
+  show("play"); ask();
+}
 function show(n){["home","play","done"].forEach(s=>$(s).classList.toggle("hidden",s!==n));}
 function renderHome(){
   const known=WORDS.filter(w=>box(w.id)>=2).length;
   $("total").textContent=S.stars?`⭐ ${S.stars} Sterne | ${known} von ${WORDS.length} Wörtern kannst du schon`:"";
+  $("cats").innerHTML=CATS.map(c=>{
+    const ws=WORDS.filter(w=>w.c===c.k), k=ws.filter(w=>box(w.id)>=2).length;
+    return `<button class="cat" data-k="${c.k}"><span class="e" aria-hidden="true">${c.e}</span><span class="n">${c.n}</span><span class="p">${k} von ${ws.length}</span><span class="bar"><b style="width:${Math.round(k/ws.length*100)}%"></b></span></button>`;
+  }).join("");
 }
+$("cats").addEventListener("click",e=>{const b=e.target.closest(".cat"); if(b) start(b.dataset.k);});
 function ask(){
   if(R.i>=ROUND) return finish();
   $("prog").innerHTML=Array.from({length:ROUND},(_,k)=>`<i class="${k<R.i?"done":k===R.i?"now":""}"></i>`).join("");
@@ -140,7 +174,10 @@ function ask(){
   const due=R.retry.findIndex(x=>x.at<=R.i);
   const w=due>=0?R.retry.splice(due,1)[0].w:pick();
   R.recent.push(w.id); if(R.recent.length>3) R.recent.shift();
-  const others=shuffle(WORDS.filter(x=>x.id!==w.id)).slice(0,2);
+  // Ablenker bevorzugt aus demselben Thema
+  const same=shuffle(WORDS.filter(x=>x.c===w.c&&x.id!==w.id));
+  const rest=shuffle(WORDS.filter(x=>x.c!==w.c));
+  const others=[...same,...rest].slice(0,2);
   const opts=shuffle([w,...others]);
   // Typ A: englisches Wort hören -> Bild tippen. Typ B: Bild + Deutsch -> englisches Wort tippen.
   const typeA=box(w.id)<1?Math.random()<.6:Math.random()<.4;
@@ -161,7 +198,7 @@ function ask(){
 }
 $("opts").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b||R.answered) return;
-  const w=R.cur.w, ok=+b.dataset.id===w.id;
+  const w=R.cur.w, ok=b.dataset.id===w.id;
   if(ok){
     R.answered=true; b.classList.add("right","pop");
     S.b[w.id]=box(w.id)===0?2:Math.min(4,box(w.id)+1);
@@ -183,7 +220,7 @@ function finish(){
   $("doneTxt").textContent=`${R.right} von ${ROUND} gleich beim ersten Mal richtig!`;
   show("done");
 }
-$("start").onclick=start; $("again").onclick=start;
+$("start").onclick=()=>start(null); $("again").onclick=()=>start();
 $("home2").onclick=()=>{renderHome(); show("home");};
 $("reset").onclick=()=>{if(confirm("Wirklich alles neu anfangen?")){S={b:{},stars:0}; save(); renderHome();}};
 renderHome();
