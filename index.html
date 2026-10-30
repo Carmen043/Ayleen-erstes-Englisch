@@ -65,6 +65,7 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
 .win:focus{outline:none;border-color:var(--accent)}
 .wbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .tip{background:var(--sky);font-size:1.3rem;font-weight:600;padding:16px 24px;margin-top:10px}
+.back{background:var(--card);border:3px solid var(--edge);font-size:1.15rem;font-weight:600;padding:8px 18px;margin-bottom:10px}
 .next{background:var(--ok);color:#fff;font-size:1.5rem;font-weight:700;padding:16px 36px;margin-top:10px}
 .pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -87,6 +88,7 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
   </section>
 
   <section id="play" class="hidden">
+    <div style="text-align:left"><button class="back" id="back">← Zurück</button></div>
     <div class="prog" id="prog"></div>
     <div class="q">
       <div class="ask" id="ask"></div>
@@ -237,6 +239,7 @@ function checkWrite(){
 }
 $("wOk").onclick=checkWrite;
 $("wIn").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault(); checkWrite();}});
+$("back").onclick=()=>{try{speechSynthesis.cancel();}catch(e){} renderHome(); show("home");};
 $("start").onclick=()=>start("tap"); $("startW").onclick=()=>start("write"); $("again").onclick=()=>start(R.mode);
 $("home2").onclick=()=>{renderHome(); show("home");};
 $("reset").onclick=()=>{if(confirm("Wirklich alles neu anfangen?")){S={b:{},w:{},stars:0}; save(); renderHome();}};
