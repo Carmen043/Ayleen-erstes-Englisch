@@ -56,19 +56,18 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
 .opts button.right{background:var(--okbg);border-color:var(--ok)}
 .opts button.wrong{background:var(--badbg);border-color:var(--bad);opacity:.7}
 .fb{font-size:1.6rem;font-weight:700;margin-top:16px;min-height:2.2rem}
-.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)} .fb.almost{color:#C98A00}
+.fb .sol{font-size:2.4rem;color:var(--text);margin-top:4px}
+.fb .said{font-size:1rem;color:var(--muted);font-weight:500;margin-top:4px}
+.go.pen{background:var(--ok);box-shadow:0 5px 0 color-mix(in srgb,var(--ok) 60%,#000);margin-top:14px;font-size:1.5rem;padding:16px 32px}
+.blanks{font-size:2rem;letter-spacing:.12em;margin-top:14px;font-weight:600;color:var(--muted)}
+.win{width:100%;font:inherit;font-size:2.4rem;text-align:center;min-height:130px;margin-top:12px;border:3px dashed var(--edge);border-radius:22px;background:var(--bg);color:var(--text);padding:12px}
+.win:focus{outline:none;border-color:var(--accent)}
+.wbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tip{background:var(--sky);font-size:1.3rem;font-weight:600;padding:16px 24px;margin-top:10px}
 .next{background:var(--ok);color:#fff;font-size:1.5rem;font-weight:700;padding:16px 36px;margin-top:10px}
 .pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
-.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
-.cat{background:var(--card);border:3px solid var(--edge);padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px}
-.cat .e{font-size:2.6rem;line-height:1.1}
-.cat .n{font-size:1.25rem;font-weight:600}
-.cat .p{font-size:.95rem;color:var(--muted)}
-.cat .bar{width:80%;height:8px;border-radius:4px;background:var(--edge);overflow:hidden;margin-top:4px}
-.cat .bar b{display:block;height:100%;background:var(--star)}
-.mix{width:100%;margin-top:18px;font-size:1.45rem;padding:16px 20px}
-.chip{display:inline-block;background:var(--card);border:2px solid var(--edge);border-radius:16px;padding:2px 12px;font-size:1rem;color:var(--muted);margin-bottom:8px}
 .reset{background:none;color:var(--muted);text-decoration:underline;font-size:1rem;margin-top:30px}
 @media (prefers-reduced-motion: reduce){.pop{animation:none}}
 @media (max-width:380px){.opts.pics button{font-size:3rem}.word{font-size:2.2rem}}
@@ -79,21 +78,25 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
   <section id="home">
     <h1>Hello! 👋</h1>
     <p class="sub">Lerne deine ersten englischen Wörter</p>
+    <div class="parade" aria-hidden="true">🐱🐶🦄🍦⚽☀️</div>
     <div class="stars" id="total"></div>
-    <p class="sub" style="margin-top:10px">Wähle ein Thema:</p>
-    <div class="cats" id="cats"></div>
-    <button class="go mix" id="start">🎲 Alles gemischt</button>
+    <button class="go" id="start">Los geht’s!</button><br>
+    <button class="go pen" id="startW">✏️ Schreiben üben</button>
     <p class="sub" style="margin-top:16px">Tipp: Mach den Ton an 🔊</p>
     <button class="reset" id="reset">Alles neu anfangen</button>
   </section>
 
   <section id="play" class="hidden">
-    <div class="chip" id="chip"></div>
     <div class="prog" id="prog"></div>
     <div class="q">
       <div class="ask" id="ask"></div>
       <div id="prompt"></div>
       <div class="opts" id="opts"></div>
+      <div id="writeArea" class="hidden">
+        <div class="blanks" id="blanks" aria-hidden="true"></div>
+        <input id="wIn" class="win" lang="en" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Hier mit dem Stift schreiben">
+        <div class="wbtns"><button class="next" id="wOk">Fertig</button><button class="tip" id="wTip">💡 Tipp</button></div>
+      </div>
       <div class="fb" id="fb"></div>
       <button class="next hidden" id="next">Weiter</button>
     </div>
@@ -108,32 +111,28 @@ button:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
   </section>
 </main>
 <script>
-const CATS=[
- {k:"tiere",n:"Tiere",e:"🐾",w:[["cat","Katze","🐱"],["dog","Hund","🐶"],["horse","Pferd","🐴"],["rabbit","Hase","🐰"],["fish","Fisch","🐟"],["bird","Vogel","🐦"],["unicorn","Einhorn","🦄"],["mouse","Maus","🐭"],["cow","Kuh","🐮"],["pig","Schwein","🐷"],["duck","Ente","🦆"],["lion","Löwe","🦁"],["elephant","Elefant","🐘"],["frog","Frosch","🐸"]]},
- {k:"farben",n:"Farben",e:"🎨",w:[["red","rot","🟥"],["blue","blau","🟦"],["green","grün","🟩"],["yellow","gelb","🟨"],["orange","orange","🟧"],["purple","lila","🟪"],["brown","braun","🟫"],["black","schwarz","⬛"],["white","weiß","⬜"],["pink","rosa","🩷"]]},
- {k:"essen",n:"Essen",e:"🍎",w:[["apple","Apfel","🍎"],["banana","Banane","🍌"],["strawberry","Erdbeere","🍓"],["carrot","Karotte","🥕"],["bread","Brot","🍞"],["egg","Ei","🥚"],["milk","Milch","🥛"],["cake","Kuchen","🎂"],["pizza","Pizza","🍕"],["ice cream","Eis","🍦"]]},
- {k:"zahlen",n:"Zahlen",e:"🔢",w:[["one","eins","1️⃣"],["two","zwei","2️⃣"],["three","drei","3️⃣"],["four","vier","4️⃣"],["five","fünf","5️⃣"],["six","sechs","6️⃣"],["seven","sieben","7️⃣"],["eight","acht","8️⃣"],["nine","neun","9️⃣"],["ten","zehn","🔟"]]},
- {k:"sachen",n:"Spielen & Schule",e:"🧸",w:[["ball","Ball","⚽"],["teddy","Teddy","🧸"],["kite","Drachen","🪁"],["car","Auto","🚗"],["bike","Fahrrad","🚲"],["book","Buch","📖"],["pencil","Bleistift","✏️"],["schoolbag","Schulranzen","🎒"],["house","Haus","🏠"]]},
- {k:"natur",n:"Natur & Wetter",e:"🌈",w:[["sun","Sonne","☀️"],["moon","Mond","🌙"],["star","Stern","⭐"],["tree","Baum","🌳"],["flower","Blume","🌸"],["rain","Regen","🌧️"],["snow","Schnee","❄️"],["rainbow","Regenbogen","🌈"]]},
- {k:"familie",n:"Familie",e:"👨‍👩‍👧",w:[["mum","Mama","👩"],["dad","Papa","👨"],["sister","Schwester","👧"],["brother","Bruder","👦"],["grandma","Oma","👵"],["grandpa","Opa","👴"],["baby","Baby","👶"]]},
- {k:"koerper",n:"Mein Körper",e:"👂",w:[["hand","Hand","✋"],["foot","Fuß","🦶"],["nose","Nase","👃"],["eye","Auge","👁️"],["ear","Ohr","👂"],["mouth","Mund","👄"]]},
- {k:"sagen",n:"Sagen & Fühlen",e:"😀",w:[["hello","hallo","👋"],["yes","ja","👍"],["no","nein","👎"],["happy","fröhlich","😀"],["sad","traurig","😢"],["tired","müde","😴"]]}
-];
-const WORDS=[];
-CATS.forEach(c=>c.w.forEach(([en,de,pic])=>WORDS.push({id:en,en,de,pic,c:c.k})));
-const OLD=["cat","dog","horse","rabbit","fish","bird","unicorn","red","blue","green","yellow","apple","ice cream","ball","sun","house","one","two","three","hello"];
+const WORDS=[
+ ["cat","Katze","🐱"],["dog","Hund","🐶"],["horse","Pferd","🐴"],["rabbit","Hase","🐰"],
+ ["fish","Fisch","🐟"],["bird","Vogel","🐦"],["unicorn","Einhorn","🦄"],
+ ["red","rot","🟥"],["blue","blau","🟦"],["green","grün","🟩"],["yellow","gelb","🟨"],
+ ["apple","Apfel","🍎"],["ice cream","Eis","🍦"],["ball","Ball","⚽"],["sun","Sonne","☀️"],["house","Haus","🏠"],
+ ["one","eins","1️⃣"],["two","zwei","2️⃣"],["three","drei","3️⃣"],["hello","hallo","👋"]
+].map(([en,de,pic],i)=>({id:i,en,de,pic}));
 
-const KEY="erste-englische-woerter-v2", OLDKEY="erste-englische-woerter-v1";
-let S={b:{},stars:0};
-try{
-  const r=localStorage.getItem(KEY);
-  if(r){const p=JSON.parse(r); if(p&&p.b) S={b:p.b,stars:p.stars||0};}
-  else{const o=localStorage.getItem(OLDKEY); if(o){const p=JSON.parse(o); if(p&&p.b){Object.keys(p.b).forEach(i=>{if(OLD[i]) S.b[OLD[i]]=p.b[i];}); S.stars=p.stars||0;}}}
-}catch(e){}
+const KEY="erste-englische-woerter-v1";
+let S={b:{},w:{},stars:0};
+try{const r=localStorage.getItem(KEY); if(r){const p=JSON.parse(r); if(p&&p.b) S={b:p.b,w:p.w||{},stars:p.stars||0};}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const box=id=>S.b[id]??0;           // 0 = neu, 1 = schwierig, 2..4 = kann ich
 const W=[8,12,4,2,1];
 const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const wbox=id=>S.w[id]??0;
+const bx=id=>R&&R.mode==="write"?wbox(id):box(id);
+const norm=s=>s.normalize("NFC").replace(/[\u00AD\u200B-\u200F\u2060\uFEFF]/g,"").toLowerCase().replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]); for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[a.length][b.length];}
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 
 let voice=null;
@@ -143,30 +142,18 @@ function say(t){try{speechSynthesis.cancel(); const u=new SpeechSynthesisUtteran
 
 const ROUND=10; let R;
 function pick(){
-  const list=R.pool.filter(w=>!R.recent.includes(w.id));
-  let tot=0; const ws=list.map(w=>{const x=W[box(w.id)]; tot+=x; return x;});
+  const list=WORDS.filter(w=>!R.recent.includes(w.id));
+  let tot=0; const ws=list.map(w=>{const x=W[bx(w.id)]; tot+=x; return x;});
   let r=Math.random()*tot;
   for(let i=0;i<list.length;i++){r-=ws[i]; if(r<=0) return list[i];}
   return list[list.length-1];
 }
-let CUR=null; // null = alles gemischt
-function start(cat){
-  CUR=cat===undefined?CUR:cat;
-  const c=CATS.find(x=>x.k===CUR);
-  R={i:0,right:0,recent:[],retry:[],won:[],pool:c?WORDS.filter(w=>w.c===c.k):WORDS};
-  $("chip").textContent=c?`${c.e} ${c.n}`:"🎲 Alles gemischt";
-  show("play"); ask();
-}
+function start(mode){R={mode:mode||"tap",i:0,right:0,recent:[],retry:[],won:[]}; show("play"); ask();}
 function show(n){["home","play","done"].forEach(s=>$(s).classList.toggle("hidden",s!==n));}
 function renderHome(){
   const known=WORDS.filter(w=>box(w.id)>=2).length;
   $("total").textContent=S.stars?`⭐ ${S.stars} Sterne | ${known} von ${WORDS.length} Wörtern kannst du schon`:"";
-  $("cats").innerHTML=CATS.map(c=>{
-    const ws=WORDS.filter(w=>w.c===c.k), k=ws.filter(w=>box(w.id)>=2).length;
-    return `<button class="cat" data-k="${c.k}"><span class="e" aria-hidden="true">${c.e}</span><span class="n">${c.n}</span><span class="p">${k} von ${ws.length}</span><span class="bar"><b style="width:${Math.round(k/ws.length*100)}%"></b></span></button>`;
-  }).join("");
 }
-$("cats").addEventListener("click",e=>{const b=e.target.closest(".cat"); if(b) start(b.dataset.k);});
 function ask(){
   if(R.i>=ROUND) return finish();
   $("prog").innerHTML=Array.from({length:ROUND},(_,k)=>`<i class="${k<R.i?"done":k===R.i?"now":""}"></i>`).join("");
@@ -174,12 +161,19 @@ function ask(){
   const due=R.retry.findIndex(x=>x.at<=R.i);
   const w=due>=0?R.retry.splice(due,1)[0].w:pick();
   R.recent.push(w.id); if(R.recent.length>3) R.recent.shift();
-  // Ablenker bevorzugt aus demselben Thema
-  const same=shuffle(WORDS.filter(x=>x.c===w.c&&x.id!==w.id));
-  const rest=shuffle(WORDS.filter(x=>x.c!==w.c));
-  const others=[...same,...rest].slice(0,2);
+  const others=shuffle(WORDS.filter(x=>x.id!==w.id)).slice(0,2);
   const opts=shuffle([w,...others]);
   // Typ A: englisches Wort hören -> Bild tippen. Typ B: Bild + Deutsch -> englisches Wort tippen.
+  $("writeArea").classList.add("hidden"); $("opts").classList.remove("hidden");
+  if(R.mode==="write"){
+    R.cur={w}; R.tip=0;
+    $("ask").textContent="Schreib das Wort auf Englisch!";
+    $("prompt").innerHTML=`<div class="big">${w.pic}</div><div class="de">${w.de}</div><button class="speak" id="spk" aria-label="Anhören">🔊</button>`;
+    $("spk").onclick=()=>say(w.en);
+    $("opts").classList.add("hidden"); $("writeArea").classList.remove("hidden");
+    $("wIn").value=""; $("wIn").disabled=false; $("wOk").classList.remove("hidden"); $("wTip").classList.remove("hidden");
+    renderBlanks(); return;
+  }
   const typeA=box(w.id)<1?Math.random()<.6:Math.random()<.4;
   R.cur={w,typeA};
   if(typeA){
@@ -198,7 +192,7 @@ function ask(){
 }
 $("opts").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b||R.answered) return;
-  const w=R.cur.w, ok=b.dataset.id===w.id;
+  const w=R.cur.w, ok=+b.dataset.id===w.id;
   if(ok){
     R.answered=true; b.classList.add("right","pop");
     S.b[w.id]=box(w.id)===0?2:Math.min(4,box(w.id)+1);
@@ -220,9 +214,32 @@ function finish(){
   $("doneTxt").textContent=`${R.right} von ${ROUND} gleich beim ersten Mal richtig!`;
   show("done");
 }
-$("start").onclick=()=>start(null); $("again").onclick=()=>start();
+function renderBlanks(){const w=R.cur.w; $("blanks").innerHTML=w.en.split("").map((c,i)=>c===" "?"&nbsp;":(i<R.tip?esc(c):"_")).join(" ");}
+$("wTip").onclick=()=>{if(R.answered) return; R.tipUsed=true; R.tip=Math.min(R.cur.w.en.length,R.tip+1); renderBlanks();};
+function checkWrite(){
+  if(R.answered) return;
+  const w=R.cur.w, raw=$("wIn").value, u=norm(raw), t=norm(w.en); if(!u) return;
+  const d=lev(u,t); R.answered=true;
+  $("wIn").disabled=true; $("wOk").classList.add("hidden"); $("wTip").classList.add("hidden");
+  R.tip=w.en.length; renderBlanks();
+  const fb=$("fb");
+  if(d===0){
+    const b=wbox(w.id); S.w[w.id]=b===0?2:Math.min(4,b+1);
+    if(R.tipUsed){fb.textContent="Richtig! 👍";} else {R.right++; S.stars++; R.won.push(w.pic); fb.textContent=["Super! ⭐","Toll geschrieben! ⭐","Klasse! ⭐"][Math.floor(Math.random()*3)];}
+    fb.className="fb ok";
+  } else {
+    S.w[w.id]=1; R.retry.push({w,at:R.i+3});
+    fb.innerHTML=`${d===1?"Fast! So schreibt man es:":"So schreibt man es:"}<div class="sol">${esc(w.en)}</div><div class="said">Du hast geschrieben: „${esc(raw.trim())}“</div>`;
+    fb.className="fb "+(d===1?"almost":"bad");
+  }
+  R.tipUsed=false; say(w.en); save();
+  $("next").classList.remove("hidden"); $("next").focus();
+}
+$("wOk").onclick=checkWrite;
+$("wIn").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault(); checkWrite();}});
+$("start").onclick=()=>start("tap"); $("startW").onclick=()=>start("write"); $("again").onclick=()=>start(R.mode);
 $("home2").onclick=()=>{renderHome(); show("home");};
-$("reset").onclick=()=>{if(confirm("Wirklich alles neu anfangen?")){S={b:{},stars:0}; save(); renderHome();}};
+$("reset").onclick=()=>{if(confirm("Wirklich alles neu anfangen?")){S={b:{},w:{},stars:0}; save(); renderHome();}};
 renderHome();
 </script>
 </body>
